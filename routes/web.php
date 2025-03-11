@@ -6,6 +6,7 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\AnalyticsController;
 
 
 
@@ -42,11 +43,6 @@ Route::middleware('auth')->group(function () {
 
 
 
-
-
-
-
-
 Route::middleware('auth')->group(function () {
     // Создание подписки
     Route::get('/subscriptions/create', [SubscriptionController::class, 'createForm'])->name('subscriptions.create.form');
@@ -55,7 +51,7 @@ Route::middleware('auth')->group(function () {
     // История подписок
     Route::get('/subscriptions', [SubscriptionController::class, 'history'])->name('subscriptions.history');
 
-  
+    Route::get('/profile/analytics', [AnalyticsController::class, 'index'])->name('profile.analytics');
 
 
   // Отмена подписки

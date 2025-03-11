@@ -14,6 +14,7 @@ class Subscription extends Model
         'plan',
         'price',
         'title',
+        'category',
         'start_date',
         'end_date',
         'is_active',

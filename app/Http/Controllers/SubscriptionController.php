@@ -3,28 +3,18 @@
 namespace App\Http\Controllers;
 
 use App\Models\Subscription;
-use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class SubscriptionController extends Controller
 {
-
-
-
  // Отмена подписки
  public function cancel($id)
  {
      $subscription = Subscription::findOrFail($id);
      $subscription->update(['is_active' => false]);
-
-     return redirect()->route('subscriptions.history')->with('success', 'Subscription cancelled successfully!');
+     return redirect()->route('subscriptions.history')->with('success', 'Подписка удачно отменена!');
  }
-
-
-
-
-
 
 
 // Возобновление подписки
@@ -39,19 +29,11 @@ public function resume($id)
             'end_date' => now()->addMonth(), // Пример: возобновление на 1 месяц
         ]);
 
-        return redirect()->route('subscriptions.history')->with('success', 'Subscription resumed successfully!');
+        return redirect()->route('subscriptions.history')->with('success', 'Подписка удачно возобновлена!');
     }
 
-    return redirect()->route('subscriptions.history')->with('error', 'Subscription is already active.');
+    return redirect()->route('subscriptions.history')->with('error', 'Подписка уже активна.');
 }
-
-
-
-
-
-
-
-
 
 
  // Форма изменения тарифного плана
@@ -65,17 +47,21 @@ public function resume($id)
  public function changePlan(Request $request, $id)
  {
      $request->validate([
-         'plan' => 'required|string',
-         'price' => 'required|numeric',
+        'title' => 'required|string',
+        'category' => 'required|string',
+        'plan' => 'required|string',
+        'price' => 'required|numeric',
      ]);
 
      $subscription = Subscription::findOrFail($id);
      $subscription->update([
-         'plan' => $request->plan,
-         'price' => $request->price,
+        'title' => $request->title,
+        'category' => $request->category,
+        'plan' => $request->plan,
+        'price' => $request->price,
      ]);
 
-     return redirect()->route('subscriptions.history')->with('success', 'Plan changed successfully!');
+     return redirect()->route('subscriptions.history')->with('success', 'План успешно изменен');
  }
 
  // Продление подписки
@@ -86,14 +72,8 @@ public function resume($id)
          'end_date' => $subscription->end_date->addMonth(), // Пример: продление на 1 месяц
      ]);
 
-     return redirect()->route('subscriptions.history')->with('success', 'Subscription renewed successfully!');
+     return redirect()->route('subscriptions.history')->with('success', 'Подписка продлена на месяц!');
  }
-
-
-
-
-
-
 
     public function createForm()
     {
@@ -102,9 +82,10 @@ public function resume($id)
     // Создание подписки
     public function create(Request $request)
     {
-
-        
+   
         $request->validate([
+            'title' => 'required|string',
+            'category' => 'required|string',
             'plan' => 'required|string',
             'price' => 'required|numeric',
         ]);
@@ -112,6 +93,7 @@ public function resume($id)
         $user = Auth::user();
 
         $subscription = $user->subscriptions()->create([
+            'category' => $request->category,
             'plan' => $request->plan,
             'title' => $request->title, // Сохранение названия подписки
             'price' => $request->price,
@@ -119,12 +101,9 @@ public function resume($id)
             'end_date' => now()->addMonth(), // Пример: подписка на 1 месяц
         ]);
 
-        return redirect()->route('subscriptions.history')->with('success', 'Subscription created successfully!');
+        return redirect()->route('subscriptions.history')->with('success', 'Подписка успешо создана!');
     }
 
-
-
-   
 
     // Получение информации о подписке
     public function show($id)
